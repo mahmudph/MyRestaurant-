@@ -14,6 +14,7 @@ import com.example.restaurantreview.databinding.ActivityMainBinding
 import com.example.restaurantreview.models.CustomerReviewsItem
 import com.example.restaurantreview.models.Restaurant
 import com.example.restaurantreview.viewmodel.MainModel
+import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             setRestaurantData(restaurant)
         })
 
+
         val layoutManager = LinearLayoutManager(this)
         binding.rvReview.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(this, layoutManager.orientation)
@@ -46,11 +48,18 @@ class MainActivity : AppCompatActivity() {
             showLoading(it)
         })
 
+        viewModel.snackbarMsg.observe(this, Observer {
+            it.getContentIfNotHandled()?.let { msg ->
+                Snackbar.make(window.decorView.rootView, msg, Snackbar.LENGTH_SHORT).show()
+            }
+        })
+
         binding.btnSend.setOnClickListener { view ->
             viewModel.postReview(binding.edReview.text.toString())
             val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
+
     }
     private fun setRestaurantData(restaurant: Restaurant) {
         binding.tvTitle.text = restaurant.name

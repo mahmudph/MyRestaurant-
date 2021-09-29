@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.restaurantreview.MainActivity
+import com.example.restaurantreview.event.Event
 import com.example.restaurantreview.models.CustomerReviewsItem
 import com.example.restaurantreview.models.PostReviewResponse
 import com.example.restaurantreview.models.Restaurant
@@ -22,6 +23,10 @@ class MainModel: ViewModel() {
 
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
+
+
+    private val _snackbarMsg = MutableLiveData<Event<String>>()
+    val snackbarMsg: LiveData<Event<String>> = _snackbarMsg
 
     companion object{
         private const val TAG = "MainViewModel"
@@ -81,6 +86,7 @@ class MainModel: ViewModel() {
 
                 if (response.isSuccessful && responseBody != null) {
                     _listReview.value = responseBody.customerReviews
+                    _snackbarMsg.value = Event(responseBody?.message)
 
                 } else {
                     Log.e(TAG, "onResponse: ${response.message()}")
